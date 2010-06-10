@@ -1,0 +1,5 @@
+This repo can be used to build a BrowserPlus OpenContainingFolder service.
+This service uses submodules browserplus/bakery, 
+browserplus/bp-service-framework, and browserplus/bp-file
+ 
+Instructions to build the service are in the file BUILDING.

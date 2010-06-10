@@ -1,0 +1,10 @@
+{
+  "type": "standalone",
+  "CoreletLibrary": "@ServiceLibrary@",
+    "strings": { 
+      "en": { 
+          "title": "OpenContainingFolder Service", 
+          "summary": "Lets you open the folder containing a specified file."
+      }
+    }
+  }
