@@ -47,6 +47,13 @@ OpenContainingFolder::doOpen(const bpf::Path& path,
         errMsg = string("Unable to open folder for ") + path.externalUtf8();
         rval = false;
     }
+
+    // Yeesh.  For some reason, shell windows will sometimes 
+    // immediately close.  Thus, we open it again.  If it closed,
+    // this will open it.  If it didn't close, it's a no-op.
+    // I love windows.
+    (void) ::SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
+
     ::ILFree(pidl);
     ::CoUninitialize();
     return rval;
