@@ -28,12 +28,12 @@ using namespace std;
 using namespace bplus::service;
 namespace bpf = bp::file;
 
-BP_SERVICE_DESC(OpenContainingFolder, "OpenContainingFolder", "1.0.0",
-                "Lets you open the folder which contains a file.")
+BP_SERVICE_DESC(OpenContainingFolder, "OpenContainingFolder", "1.0.1",
+                "Lets you open the folder which contains a file/folder.")
 ADD_BP_METHOD(OpenContainingFolder, open,
               "Opens the folder containing 'file' and selects 'file'.")
 ADD_BP_METHOD_ARG(open, "file", Path, true, 
-                  "File whose containing folder should be opened.")
+                  "File/folder whose containing folder should be opened.")
 END_BP_SERVICE_DESC
 
 

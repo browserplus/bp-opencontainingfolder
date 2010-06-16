@@ -30,7 +30,7 @@ using namespace bplus::service;
 namespace bpf = bp::file;
 
 bool
-OpenContainingFolder::doOpen(const bpf::Path path,
+OpenContainingFolder::doOpen(const bpf::Path& path,
                              string& errMsg)
 {
     string full = path.externalUtf8();
