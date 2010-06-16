@@ -29,34 +29,20 @@ using namespace std;
 using namespace bplus::service;
 namespace bpf = bp::file;
 
-void
-OpenContainingFolder::open(const Transaction& tran, 
-                           const bplus::Map& args)
+bool
+OpenContainingFolder::doOpen(const bpf::Path path,
+                             string& errMsg)
 {
-    // dig out args
-    const bplus::Path* uri =
-        dynamic_cast<const bplus::Path*>(args.value("file"));
-    if (!uri) {
-        throw string("required files parameter missing");
-    }
-
-    bpf::Path path = bpf::pathFromURL((string)*uri);
-    if (!bpf::exists(path)) {
-        string msg = path.externalUtf8() + " does not exist";
-        log(BP_ERROR, msg);
-        tran.error("openError", msg.c_str());
-        return;
-    }
     string full = path.externalUtf8();
     string dir = bpf::Path(path.parent_path()).externalUtf8();
     NSWorkspace* ws = [NSWorkspace sharedWorkspace];
-    [ws selectFile: [NSString stringWithUTF8String: full.c_str()]
-        inFileViewerRootedAtPath: [NSString stringWithUTF8String: dir.c_str()]];
-
-    // return massive success
-    bplus::Map results;
-    results.add("success", new bplus::Bool(true));
-    tran.complete(results);
+    bool res = [ws selectFile: [NSString stringWithUTF8String: full.c_str()]
+                  inFileViewerRootedAtPath:
+                     [NSString stringWithUTF8String: dir.c_str()]];
+    if (!res) {
+        errMsg = string("unable to open folder for ") + full;
+    }
+    return res;
 }
 
 

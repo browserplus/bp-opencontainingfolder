@@ -19,24 +19,37 @@
  * Contributor(s): 
  * ***** END LICENSE BLOCK ***** */
 
+#include <shlobj.h>
+#include "service.h"
 #include "bpservice/bpservice.h"
+#include "bpservice/bpcallback.h"
 #include "bp-file/bpfile.h"
 
-class OpenContainingFolder : public bplus::service::Service
+using namespace std;
+using namespace bplus::service;
+namespace bpf = bp::file;
+
+bool
+OpenContainingFolder::doOpen(const bpf::Path& path,
+                             string& errMsg)
 {
-public:
-    BP_SERVICE(OpenContainingFolder);
-    
-    OpenContainingFolder() : Service() {
-    }
-    ~OpenContainingFolder() {
+    HRESULT hr = ::CoInitialize(NULL);
+    if (FAILED(hr)) {
+        errMsg = "CoInitialize failed";
+        return false;
     }
 
-    void open(const bplus::service::Transaction& tran, 
-              const bplus::Map& args);
+    bool rval = true;
+    bpf::tString full = path.external_file_string();
+    ITEMIDLIST* pidl = ::ILCreateFromPath(full.c_str());
+    hr = ::SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
+    if (FAILED(hr)) {
+        errMsg = string("Unable to open folder for ") + path.externalUtf8();
+        rval = false;
+    }
+    ::ILFree(pidl);
+    ::CoUninitialize();
+    return rval;
+}
 
- private:
-    bool doOpen(const bp::file::Path& path,
-                std::string& errMsg);
-};
 
