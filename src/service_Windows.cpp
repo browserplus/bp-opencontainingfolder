@@ -41,25 +41,12 @@ OpenContainingFolder::doOpen(const bpf::Path& path,
     }
     bool rval = true;
 
-#ifdef NOTDEF
-    bpf::tString full = path.external_file_string();
-    ITEMIDLIST* pidl = ::ILCreateFromPath(full.c_str());
-    hr = ::SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
-    if (FAILED(hr)) {
-        // Yeesh.  For some reason, shell windows will sometimes 
-        // immediately close.  Thus, we open it again.  If it closed,
-        // this will open it.  If it didn't close, it's a no-op.
-        // I love windows.
-        log(BP_WARN, "SHOpenFolderAndSelectItems failed, trying again: " + ss.str());
-        hr = ::SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
-        if (FAILED(hr)) {
-            errMsg = string("Unable to open folder for ") + path.externalUtf8();
-            rval = false;
-        }
-    }
+    // XXX: Would be nice to use SHOpenFolderAndSelectItems(),
+    // XXX: but for some reason, shell windows will sometimes 
+    // XXX: immediately close.  We can do two opens, but
+    // XXX: it looks funky.  Hence, we use ShellExecuteW() instead.
+    // XXX: I love windows.
 
-    ::ILFree(pidl);
-#else
     bpf::tString params(L"/select,");
     params += path.external_file_string();
     int h = (int) ::ShellExecuteW(0, L"open", L"C:\\WINDOWS\\explorer.exe",
@@ -85,7 +72,7 @@ OpenContainingFolder::doOpen(const bpf::Path& path,
         errMsg = string("Unable to open folder for ") + path.externalUtf8();
         rval = false;
     }
-#endif
+
     ::CoUninitialize();
     return rval;
 }
