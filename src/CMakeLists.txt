@@ -56,13 +56,13 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF ()
 
 INCLUDE_DIRECTORIES(
-  "${CMAKE_CURRENT_SOURCE_DIR}/../external/build/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include"
   "${frameworkDir}/include"
 )
  
 LINK_DIRECTORIES(
-  "${CMAKE_CURRENT_SOURCE_DIR}/../external/build/lib"
-  "${CMAKE_CURRENT_SOURCE_DIR}/../external/build/lib/${CMAKE_BUILD_TYPE}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/lib"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/lib/${CMAKE_BUILD_TYPE}"
 )
  
 SET(OS_SRCS)
@@ -72,14 +72,6 @@ ELSEIF (APPLE)
    SET(OS_SRCS service_Darwin.mm)
 ENDIF ()
 SET(SRCS service.cpp ${OS_SRCS})
-
-# Pre-build step, build our externals
-#
-ADD_CUSTOM_TARGET(
-    ${serviceName}Externals ALL
-    COMMAND ruby build.rb
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../external"
-    COMMENT Building externals...)
 
 # Alas, trying to test CMAKE_CONFIGURATION_TYPES doesn't work,
 # it returns "Debug;Release" even for a single config generator
@@ -115,8 +107,6 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(${serviceName} bpfile_s ${BOOST_LIBS} ${OS_LIBS})
 
-ADD_DEPENDENCIES(${serviceName} ${serviceName}Externals)
-
 # create service dir
 #
 FILE(MAKE_DIRECTORY ${outputDir})
@@ -140,3 +130,11 @@ IF (NOT WIN32)
     ENDIF ()
 ENDIF ()
 
+# Pre-build step, build our externals
+#
+ADD_CUSTOM_TARGET(
+    ${serviceName}Externals ALL
+    COMMAND ruby build.rb
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../external"
+    COMMENT Building externals...)
+ADD_DEPENDENCIES(${serviceName} ${serviceName}Externals)
