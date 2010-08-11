@@ -1,10 +1,11 @@
 {
-  "type": "standalone",
-  "CoreletLibrary": "@SERVICE_LIBRARY@",
-    "strings": { 
-      "en": { 
-          "title": "OpenContainingFolder Service", 
-          "summary": "Lets you open the folder containing a specified file/folder."
-      }
+  "type":"standalone",
+  "CoreletLibrary":"@SERVICE_LIBRARY@",
+  "ServiceLibrary":"@SERVICE_LIBRARY@",
+  "strings":{ 
+    "en":{ 
+      "title":"OpenContainingFolder Service", 
+      "summary":"Lets you open the folder containing a specified file/folder."
     }
   }
+}
