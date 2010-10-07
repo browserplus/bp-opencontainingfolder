@@ -16,13 +16,14 @@ class TestOpenContainingFolder < Test::Unit::TestCase
     end
     @cwd = File.dirname(File.expand_path(__FILE__))
     @service = File.join(@cwd, "../#{subdir}")
+    @providerDir = File.expand_path(File.join(@cwd, "providerDir"))
   end
   
   def teardown
   end
 
   def test_load_service
-    BrowserPlus.run(@service) { |s|
+    BrowserPlus.run(@service, @providerDir) { |s|
     }
   end
 end
