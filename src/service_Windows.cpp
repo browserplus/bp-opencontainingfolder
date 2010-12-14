@@ -24,6 +24,7 @@
 #include "service.h"
 #include "bpservice/bpservice.h"
 #include "bpservice/bpcallback.h"
+#include "bputil/bpstrutil.h"
 #include "bp-file/bpfile.h"
 
 using namespace std;
