@@ -48,9 +48,9 @@ OpenContainingFolder::open(const Transaction& tran,
         throw string("required files parameter missing");
     }
 
-    bpf::Path path = bpf::pathFromURL((string)*uri);
-    if (!bpf::exists(path)) {
-        string msg = path.externalUtf8() + " does not exist";
+    boost::filesystem::path path = bpf::pathFromURL((string)*uri);
+    if (!bpf::pathExists(path)) {
+        string msg = bpf::nativeUtf8String(path) + " does not exist";
         log(BP_ERROR, msg);
         tran.error("openError", msg.c_str());
         return;

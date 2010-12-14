@@ -27,14 +27,14 @@
 
 using namespace std;
 using namespace bplus::service;
-namespace bpf = bp::file;
+namespace bfs = boost::filesystem;
 
 bool
-OpenContainingFolder::doOpen(const bpf::Path& path,
+OpenContainingFolder::doOpen(const bfs::path& path,
                              string& errMsg)
 {
-    string full = path.externalUtf8();
-    string dir = bpf::Path(path.parent_path()).externalUtf8();
+    string full = path.string();
+    string dir = path.parent_path().string();
     NSWorkspace* ws = [NSWorkspace sharedWorkspace];
     bool res = [ws selectFile: [NSString stringWithUTF8String: full.c_str()]
                   inFileViewerRootedAtPath:

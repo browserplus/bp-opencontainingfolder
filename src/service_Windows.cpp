@@ -29,9 +29,10 @@
 using namespace std;
 using namespace bplus::service;
 namespace bpf = bp::file;
+namespace bfs = boost::filesystem;
 
 bool
-OpenContainingFolder::doOpen(const bpf::Path& path,
+OpenContainingFolder::doOpen(const bfs::path& path,
                              string& errMsg)
 {
     HRESULT hr = ::CoInitialize(NULL);
@@ -47,8 +48,8 @@ OpenContainingFolder::doOpen(const bpf::Path& path,
     // XXX: it looks funky.  Hence, we use ShellExecuteW() instead.
     // XXX: I love windows.
 
-    bpf::tString params(L"/select,");
-    params += path.external_file_string();
+    wstring params(L"/select,");
+    params += bpf::nativeString(path);
     int h = (int) ::ShellExecuteW(0, L"open", L"C:\\WINDOWS\\explorer.exe",
                                   params.c_str(), NULL,
                                   SW_SHOWNORMAL);
@@ -64,12 +65,12 @@ OpenContainingFolder::doOpen(const bpf::Path& path,
         stringstream ss;
         ss << "(" << dw << ")";
         if (res) {
-            bpf::tString s(msg);
-            ss << ": " << bpf::utf8FromNative(s);
+            wstring s(msg);
+            ss << ": " << bplus::strutil::wideToUtf8(s);
             LocalFree(msg);
         }
         log(BP_ERROR, ss.str());
-        errMsg = string("Unable to open folder for ") + path.externalUtf8();
+        errMsg = string("Unable to open folder for ") + bpf::nativeUtf8String(path);
         rval = false;
     }
 

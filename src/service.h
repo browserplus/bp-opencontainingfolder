@@ -36,7 +36,7 @@ public:
               const bplus::Map& args);
 
  private:
-    bool doOpen(const bp::file::Path& path,
+    bool doOpen(const boost::filesystem::path& path,
                 std::string& errMsg);
 };
 
