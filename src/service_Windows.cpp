@@ -22,38 +22,24 @@
 #include <shlobj.h>
 #include <ShellAPI.h>
 #include "service.h"
-#include "bpservice/bpservice.h"
-#include "bpservice/bpcallback.h"
 #include "bputil/bpstrutil.h"
-#include "bp-file/bpfile.h"
-
-using namespace std;
-using namespace bplus::service;
-namespace bpf = bp::file;
-namespace bfs = boost::filesystem;
 
 bool
-OpenContainingFolder::doOpen(const bfs::path& path,
-                             string& errMsg)
-{
+OpenContainingFolder::doOpen(const boost::filesystem::path& path, std::string& errMsg) {
     HRESULT hr = ::CoInitialize(NULL);
     if (FAILED(hr)) {
         errMsg = "CoInitialize failed";
         return false;
     }
     bool rval = true;
-
     // XXX: Would be nice to use SHOpenFolderAndSelectItems(),
     // XXX: but for some reason, shell windows will sometimes 
     // XXX: immediately close.  We can do two opens, but
     // XXX: it looks funky.  Hence, we use ShellExecuteW() instead.
     // XXX: I love windows.
-
-    wstring params(L"/select,");
-    params += bpf::nativeString(path);
-    int h = (int) ::ShellExecuteW(0, L"open", L"C:\\WINDOWS\\explorer.exe",
-                                  params.c_str(), NULL,
-                                  SW_SHOWNORMAL);
+    std::wstring params(L"/select,");
+    params += bp::file::nativeString(path);
+    int h = (int) ::ShellExecuteW(0, L"open", L"C:\\WINDOWS\\explorer.exe", params.c_str(), NULL, SW_SHOWNORMAL);
     if (h <= 32) {
         LPTSTR msg;
         DWORD dw = ::GetLastError();
@@ -62,21 +48,19 @@ OpenContainingFolder::doOpen(const bfs::path& path,
                                     FORMAT_MESSAGE_IGNORE_INSERTS,
                                     NULL, dw,
                                     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                    (LPTSTR)&msg, 0, NULL );
-        stringstream ss;
+                                    (LPTSTR)&msg, 0, NULL);
+        std::stringstream ss;
         ss << "(" << dw << ")";
         if (res) {
-            wstring s(msg);
+            std::wstring s(msg);
             ss << ": " << bplus::strutil::wideToUtf8(s);
             LocalFree(msg);
         }
         log(BP_ERROR, ss.str());
-        errMsg = string("Unable to open folder for ") + bpf::nativeUtf8String(path);
+        errMsg = std::string("Unable to open folder for ") + bp::file::nativeUtf8String(path);
         rval = false;
     }
-
     ::CoUninitialize();
     return rval;
 }
-
 

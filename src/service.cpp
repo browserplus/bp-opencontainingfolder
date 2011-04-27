@@ -20,15 +20,8 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "service.h"
-#include "bpservice/bpservice.h"
-#include "bpservice/bpcallback.h"
-#include "bp-file/bpfile.h"
 
-using namespace std;
-using namespace bplus::service;
-namespace bpf = bp::file;
-
-BP_SERVICE_DESC(OpenContainingFolder, "OpenContainingFolder", "1.0.1",
+BP_SERVICE_DESC(OpenContainingFolder, "OpenContainingFolder", "1.1.0",
                 "Lets you open the folder which contains a file/folder.")
 ADD_BP_METHOD(OpenContainingFolder, open,
               "Opens the folder containing 'file' and selects 'file'.")
@@ -36,33 +29,26 @@ ADD_BP_METHOD_ARG(open, "file", Path, true,
                   "File/folder whose containing folder should be opened.")
 END_BP_SERVICE_DESC
 
-
 void
-OpenContainingFolder::open(const Transaction& tran, 
-                           const bplus::Map& args)
-{
+OpenContainingFolder::open(const bplus::service::Transaction& tran, const bplus::Map& args) {
     // dig out args
-    const bplus::Path* uri =
-        dynamic_cast<const bplus::Path*>(args.value("file"));
-    if (!uri) {
-        throw string("required files parameter missing");
+    const bplus::Path* bpPath = dynamic_cast<const bplus::Path*>(args.value("file"));
+    if (!bpPath) {
+        throw std::string("required files parameter missing");
     }
-
-    boost::filesystem::path path = bpf::pathFromURL((string)*uri);
-    if (!bpf::pathExists(path)) {
-        string msg = bpf::nativeUtf8String(path) + " does not exist";
+    boost::filesystem::path path((bplus::tPathString)*bpPath);
+    if (!bp::file::pathExists(path)) {
+        std::string msg = bp::file::nativeUtf8String(path) + " does not exist";
         log(BP_ERROR, msg);
         tran.error("openError", msg.c_str());
         return;
     }
-
-    string errMsg;
+    std::string errMsg;
     if (!doOpen(path, errMsg)) {
         log(BP_ERROR, errMsg);
         tran.error("openError", errMsg.c_str());
         return;
     }
-
     // return massive success
     bplus::Map results;
     results.add("success", new bplus::Bool(true));

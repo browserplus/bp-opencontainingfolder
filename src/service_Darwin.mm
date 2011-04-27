@@ -21,28 +21,17 @@
 
 #import <Cocoa/Cocoa.h>
 #include "service.h"
-#include "bpservice/bpservice.h"
-#include "bpservice/bpcallback.h"
-#include "bp-file/bpfile.h"
-
-using namespace std;
-using namespace bplus::service;
-namespace bfs = boost::filesystem;
 
 bool
-OpenContainingFolder::doOpen(const bfs::path& path,
-                             string& errMsg)
-{
-    string full = path.string();
-    string dir = path.parent_path().string();
+OpenContainingFolder::doOpen(const boost::filesystem::path& path, std::string& errMsg) {
+    std::string full = path.string();
+    std::string dir = path.parent_path().string();
     NSWorkspace* ws = [NSWorkspace sharedWorkspace];
     bool res = [ws selectFile: [NSString stringWithUTF8String: full.c_str()]
-                  inFileViewerRootedAtPath:
-                     [NSString stringWithUTF8String: dir.c_str()]];
+                   inFileViewerRootedAtPath: [NSString stringWithUTF8String: dir.c_str()]];
     if (!res) {
-        errMsg = string("unable to open folder for ") + full;
+        errMsg = std::string("unable to open folder for ") + full;
     }
     return res;
 }
-
 

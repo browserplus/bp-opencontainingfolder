@@ -22,21 +22,15 @@
 #include "bpservice/bpservice.h"
 #include "bp-file/bpfile.h"
 
-class OpenContainingFolder : public bplus::service::Service
-{
+class OpenContainingFolder : public bplus::service::Service {
 public:
     BP_SERVICE(OpenContainingFolder);
-    
-    OpenContainingFolder() : Service() {
+    OpenContainingFolder() : bplus::service::Service() {
     }
     ~OpenContainingFolder() {
     }
-
-    void open(const bplus::service::Transaction& tran, 
-              const bplus::Map& args);
-
- private:
-    bool doOpen(const boost::filesystem::path& path,
-                std::string& errMsg);
+    void open(const bplus::service::Transaction& tran, const bplus::Map& args);
+private:
+    bool doOpen(const boost::filesystem::path& path, std::string& errMsg);
 };
 
