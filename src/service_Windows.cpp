@@ -22,7 +22,6 @@
 #include <shlobj.h>
 #include <ShellAPI.h>
 #include "service.h"
-#include "bputil/bpstrutil.h"
 
 bool
 OpenContainingFolder::doOpen(const boost::filesystem::path& path, std::string& errMsg) {
